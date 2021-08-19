@@ -1,64 +1,24 @@
-<?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <title>Invoice</title>
+
+<!-- Style Sheet -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!-- Font Awzome -->
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" type="text/css" href="<?=base_url()?>assets/css/custom.css">
+
+<!-- JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="<?=base_url()?>assets/js/validation.js"></script>
-<style type="text/css">
-body {
-    background-color: #b7b7b7;
-}
-.pull-right
-{
-	float: right;
-}
-.padding {
-    padding: 2rem !important
-}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/fontawesome.min.js"></script>
 
-.card {
-    margin-bottom: 30px;
-    border: none;
-    -webkit-box-shadow: 0px 1px 2px 1px rgba(154, 154, 204, 0.22);
-    -moz-box-shadow: 0px 1px 2px 1px rgba(154, 154, 204, 0.22);
-    box-shadow: 0px 1px 2px 1px rgba(154, 154, 204, 0.22)
-}
-
-.card-header {
-    background-color: #fff;
-    border-bottom: 1px solid #e6e6f2
-}
-
-h3 {
-    font-size: 20px
-}
-
-h5 {
-    font-size: 15px;
-    line-height: 26px;
-    color: #3d405c;
-    margin: 0px 0px 15px 0px;
-    font-family: 'Circular Std Medium';
-}
-
-.text-dark {
-    color: #3d405c !important
-}
-.remove_icon
-{
-	width: 25px;
-}
-.clear_fix
-{
-	margin: 10px;
-}
-</style>
 </head>
 <body>
 
@@ -70,14 +30,16 @@ h5 {
   			<div class="clear_fix"></div>
 		    <div class="card" id="print_area">
 		        <div class="card-header p-4">
+		        	<img src="<?=base_url()?>assets/images/dummy-logo" class="logo">
 		            <div class="float-right">
-		                <h3 class="mb-0">Invoice #558822</h3>
+
+		                <h3 class="mb-0">Invoice #<?=time()?></h3>
 		                Date: <?=date('d M, Y')?>
 		            </div>
 		        </div>
 		        <div class="card-body">
 		            
-		            <button class="btn btn-primary pull-right printHide" id="add_new" style="margin-bottom:10px;">Add Row</button>
+		            <button class="btn btn-primary pull-right printHide" id="add_new" style="margin-bottom:10px;"><i class="fa fa-plus "></i> Add Item</button>
 		            <br>
 		            <div class="table-responsive-sm">
 		                <table class="table table-striped" id="invoice_items">
@@ -94,8 +56,8 @@ h5 {
 		                    <tbody>
 		                        <tr data-row="1">
 		                            <td class="left strong"><input type="text" name="product" id="product_1" class="product form-control"></td>
-		                            <td class="left"><input type="number" name="qty" id="qty_1" class="qty form-control" onkeypress="return restrictInput(this, event, digitsOnly);"></td>
-		                            <td class="right"><input type="number" name="price" id="price_1" onkeypress="return restrictInput(this, event, integerOnly);" class="price form-control"></td>
+		                            <td class="left"><input type="number" name="qty" id="qty_1" class="qty form-control" onkeypress="return restrictInput(this, event, digitsOnly);" min="0"></td>
+		                            <td class="right"><input type="number" name="price" id="price_1" onkeypress="return restrictInput(this, event, integerOnly);"  min="0" class="price form-control"></td>
 		                            <td class="center">
 		                            	<select name="tax" id="tax_1" class="tax form-control">
 		                            		<option value="0">0%</option>
@@ -125,8 +87,8 @@ h5 {
 		                            <tr>
 		                                <td class="left">
 		                                    <strong class="text-dark">
-		                                    	<div class="input-group col-10" id="discount_area">	                                    		
-												  	<input class="form-control" id="discount" name="discount" placeholder="Discount" type="number" onkeypress="return restrictInput(this, event, integerOnly);">
+		                                    	<div class="input-group col-10" id="discount_area">
+												  	<input class="form-control" id="discount" name="discount" placeholder="Discount" type="number" onkeypress="return restrictInput(this, event, integerOnly);" min="0">
 												  	<div class="input-group-addon currency-addon">
 													    <select class="currency-selector form-control" name="discount_type" id="discount_type">
 													      <option value="1">%</option>
@@ -143,9 +105,9 @@ h5 {
 		                                </td>
 		                                <td class="right"><?=CURRENCY?> <span id="sub_total_tax">0.00</span></td>
 		                            </tr>
-		                            <tr>
+		                            <tr style="background-color: #d7d7d7;">
 		                                <td class="left">
-		                                    <strong class="text-dark">Total</strong> </td>
+		                                    <strong class="text-dark">Grand Total</strong> </td>
 		                                <td class="right">
 		                                    <strong class="text-dark"><?=CURRENCY?> <span id="grand_total">0.00</span></strong>
 		                                </td>
@@ -169,8 +131,8 @@ $(document).ready(function(){
 		row_count 	= ($(".product").length)+1;
 		html 		= 	`<tr data-row="${row_count}">
 		        	        <td class="left strong"><input type="text" name="product" id="product_${row_count}" 	class="product form-control"></td>
-		        	        <td class="left"><input type="number" name="qty" id="qty_${row_count}" class="qty form-control" onkeypress="return restrictInput(this, event, digitsOnly);"></td>
-		        	        <td class="right"><input type="number" name="price" id="price_${row_count}" class="price form-control" onkeypress="return restrictInput(this, event, integerOnly);"></td>
+		        	        <td class="left"><input type="number" name="qty" id="qty_${row_count}" class="qty form-control" onkeypress="return restrictInput(this, event, digitsOnly);" min="0"></td>
+		        	        <td class="right"><input type="number" name="price" id="price_${row_count}" class="price form-control" onkeypress="return restrictInput(this, event, integerOnly);" min="0"></td>
 		        	        <td class="center">
 		        	        	<select name="tax" id="tax_${row_count}" class="tax form-control">
 		        	        		<option value="0">0%</option>
@@ -180,7 +142,7 @@ $(document).ready(function(){
 		        	        	</select>
 		        	        </td>
 		        	        <td class="right">$ <span id="line_total_${row_count}">0.00</span></td>
-		        	        <td class="printHide"><a href="javascript:" class="remove_item"><img src="<?=base_url()?>assets/images/remove.png" class="remove_icon"></a></td>
+		        	        <td class="printHide"><a href="javascript:" class="remove_item"><i class="fa fa-minus-circle remove_icon"></i></a></td>
 		        	    </tr>`;
 
 		$('#invoice_items').append(html);
@@ -254,7 +216,7 @@ $(document).ready(function(){
 				}
 				else
 				{
-					discount_amount 	= discount;
+					discount_amount 	= parseFloat(discount);
 				}
 			}
 			sub_total_tax	= parseFloat(sub_total) - parseFloat(discount_amount) + parseFloat(total_tax);
@@ -274,24 +236,40 @@ $(document).ready(function(){
 	}
 });
 $("body").delegate("#print_invoice", "click", function(){
-    $(".printHide").remove();
     
-    $("#invoice_items input").each(function(){
-    	$(this).parent().html($(this).val());
+    var error 	= 1;
+    $(".product").each(function(){
+    	if($(this).val() != "")
+    	{
+    		error 	= 0;
+    	}
     });
-    if(!isNaN(parseFloat($("#discount").val())))
+
+    if(error == 0)
     {
-    	discount 		= $("#discount").val();
-    }
-    else
-    {
-    	discount 		= 0;
-    }
-	var discount_type 	= $("#discount_type").find(":selected").text();
-    $("#discount_area").html("Discount ("+discount+" "+discount_type+" )");
-    var printcontent = document.getElementById("print_area").innerHTML;
-    document.body.innerHTML = printcontent;
-    window.print();
-    window.location = "<?=base_url()?>";
+	    $(".printHide").remove();
+	    
+	    $("#invoice_items input").each(function(){
+	    	$(this).parent().html($(this).val());
+	    });
+	    if(!isNaN(parseFloat($("#discount").val())))
+	    {
+	    	discount 		= $("#discount").val();
+	    }
+	    else
+	    {
+	    	discount 		= 0;
+	    }
+		var discount_type 	= $("#discount_type").find(":selected").text();
+	    $("#discount_area").html("Discount ("+discount+" "+discount_type+" )");
+	    var printcontent = document.getElementById("print_area").innerHTML;
+	    document.body.innerHTML = printcontent;
+	    window.print();
+	    window.location = "<?=base_url()?>";
+	}
+	else
+	{
+		alert("Please add atleast one item !");
+	}
 });
 </script>
